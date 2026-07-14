@@ -1,0 +1,69 @@
+<!-- prettier-ignore -->
+
+{% extends 'chat/base.html' %}
+{% load static %}
+{% block title %}Register{% endblock %}
+
+{% block content %}
+<div class="register-container mx-auto">
+  <h2 class="text-center mb-4">Create Account</h2>
+
+  {% if error %}
+  <div class="alert alert-danger">{{ error }}</div>
+  {% endif %}
+
+  <form method="post" enctype="multipart/form-data">
+    {% csrf_token %}
+
+    <div class="mb-3">
+      <label for="username" class="form-label">Username *</label>
+      <input type="text" class="form-control" name="username" required />
+    </div>
+    <div class="mb-3">
+      <label for="name" class="form-label">Name *</label>
+      <input type="text" class="form-control" name="name" required />
+    </div>
+
+    <div class="mb-3">
+      <label for="password" class="form-label">Password *</label>
+      <input type="password" class="form-control" name="password" required />
+    </div>
+
+    <div class="mb-3">
+      <label for="email" class="form-label">Email *</label>
+      <input type="email" class="form-control" name="email" required />
+    </div>
+
+    <div class="mb-3">
+      <label for="phone" class="form-label">Phone *</label>
+      <input type="text" class="form-control" name="phone" required />
+    </div>
+
+    <div class="mb-3">
+      <label for="image" class="form-label">Profile Picture</label>
+      <input type="file" class="form-control" name="image" />
+    </div>
+
+    <button type="submit" class="btn btn-yellow w-100">Register</button>
+  </form>
+</div>
+
+<style>
+  .register-container {
+    max-width: 500px;
+    margin: 5rem auto;
+    padding: 2rem;
+    background-color: white;
+    border-radius: 10px;
+    box-shadow: 0 0 10px rgba(255, 204, 0, 0.3);
+  }
+  .btn-yellow {
+    background-color: #ffcc00;
+    color: white;
+    font-weight: 600;
+  }
+  .btn-yellow:hover {
+    background-color: #e6b800;
+  }
+</style>
+{% endblock %}

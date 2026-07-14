@@ -1,0 +1,52 @@
+<!-- prettier-ignore -->
+
+{% extends 'chat/base.html' %} {% block title %}Login {% endblock %} 
+{% block content %}
+<div class="login-container mx-auto">
+  <h2 class="text-center mb-4">Login</h2>
+
+  {% if messages %} {% for message in messages %}
+  <div class="alert alert-danger">{{ message }}</div>
+  {% endfor %} {% endif %}
+
+  <form method="post">
+    {% csrf_token %}
+
+    <div class="mb-3">
+      <label for="username" class="form-label">Username</label>
+      <input type="text" class="form-control" name="username" required />
+    </div>
+
+    <div class="mb-3">
+      <label for="password" class="form-label">Password</label>
+      <input type="password" class="form-control" name="password" required />
+    </div>
+
+    <button type="submit" class="btn btn-yellow w-100">Login</button>
+  </form>
+
+  <p class="mt-3 text-center">
+    Don't have an account?
+    <a href="{% url 'register' %}">Register</a>
+  </p>
+</div>
+
+<style>
+  .login-container {
+    max-width: 500px;
+    margin: 5rem auto;
+    padding: 2rem;
+    background-color: white;
+    border-radius: 10px;
+    box-shadow: 0 0 10px rgba(255, 204, 0, 0.3);
+  }
+  .btn-yellow {
+    background-color: #ffcc00;
+    color: white;
+    font-weight: 600;
+  }
+  .btn-yellow:hover {
+    background-color: #e6b800;
+  }
+</style>
+{% endblock %}

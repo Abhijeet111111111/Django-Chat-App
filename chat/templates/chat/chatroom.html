@@ -1,0 +1,164 @@
+{% extends 'chat/base.html' %} {% block content %}
+<style>
+  /* Your existing styles here */
+  .messages {
+    height: 500px;
+    overflow-y: auto;
+    border: 2px solid #ffc107;
+    background: #fffaf0;
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0 4px 10px rgb(255 193 7 / 0.3);
+  }
+  .message-box {
+    max-width: 45%;
+    min-height: 70px;
+    padding: 15px 20px;
+    border-radius: 15px;
+    box-shadow: 0 3px 6px rgb(0 0 0 / 0.1);
+    word-wrap: break-word;
+    font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+    font-size: 1rem;
+    position: relative;
+    transition: background-color 0.3s ease;
+  }
+  .message-right {
+    background: linear-gradient(135deg, #ffe066 0%, #ffc107 100%);
+    border: 1px solid #ffb300;
+    color: #3b2f00;
+  }
+  .message-left {
+    background: linear-gradient(135deg, #fdf6e3 0%, #fff8dc 100%);
+    border: 1px solid #f5deb3;
+    color: #5c4700;
+  }
+  .msg-info {
+    font-size: 0.75rem;
+    color: #6c757d;
+    margin-top: 8px;
+    text-align: right;
+    font-style: italic;
+  }
+</style>
+
+<div class="container mt-4">
+  <h3 class="text-warning mb-4 text-center">{{ room.name }}</h3>
+
+  <!-- Messages Box -->
+  <div id="messages" class="messages">
+    {% for message in messages %}
+    <div
+      class="d-flex {% if message.sender == request.user %}justify-content-end{% else %}justify-content-start{% endif %} mb-4"
+    >
+      <div
+        class="message-box {% if message.sender == request.user %}message-right{% else %}message-left{% endif %}"
+      >
+        <div>{{ message.content }}</div>
+        <div class="msg-info">
+          {{ message.timestamp|date:"H:i" }} &mdash; {{
+          message.sender.username|lower }}
+        </div>
+      </div>
+    </div>
+    {% empty %}
+    <p class="text-muted">No messages yet.</p>
+    {% endfor %}
+  </div>
+
+  <!-- Send Message Form -->
+  <form id="chat-form" class="mt-3" autocomplete="off">
+    {% csrf_token %}
+    <div class="input-group">
+      <input
+        type="text"
+        id="message-input"
+        name="content"
+        class="form-control border-warning"
+        placeholder="Type your message..."
+        required
+        autofocus
+      />
+      <button class="btn btn-warning text-white" type="submit">Send</button>
+    </div>
+  </form>
+</div>
+
+<script>
+  document.addEventListener("DOMContentLoaded", () => {
+    const roomId = "{{ room.id }}";
+    const username = "{{ request.user.username }}";
+    const messagesDiv = document.getElementById("messages");
+    const form = document.getElementById("chat-form");
+    const input = document.getElementById("message-input");
+
+    // Build WebSocket URL based on current location and room ID
+    let protocol = window.location.protocol === "https:" ? "wss" : "ws";
+    let wsUrl = `${protocol}://${window.location.host}/ws/chat/{{ room.id }}/`;
+    const chatSocket = new WebSocket(wsUrl);
+
+    chatSocket.onopen = () => {
+      console.log("WebSocket connection established");
+    };
+
+    chatSocket.onmessage = function (e) {
+      const data = JSON.parse(e.data);
+      const message = data.message;
+      const sender = data.username;
+
+      // Create message container elements
+      const messageWrapper = document.createElement("div");
+      messageWrapper.classList.add("d-flex", "mb-4");
+
+      if (sender === username) {
+        messageWrapper.classList.add("justify-content-end");
+      } else {
+        messageWrapper.classList.add("justify-content-start");
+      }
+
+      const messageBox = document.createElement("div");
+      messageBox.classList.add("message-box");
+      messageBox.classList.add(
+        sender === username ? "message-right" : "message-left",
+      );
+
+      // Message text
+      const messageContent = document.createElement("div");
+      messageContent.textContent = message;
+
+      // Message info (username only, no timestamp for real-time)
+      const msgInfo = document.createElement("div");
+      msgInfo.classList.add("msg-info");
+      msgInfo.textContent = `— ${sender.toLowerCase()}`;
+
+      messageBox.appendChild(messageContent);
+      messageBox.appendChild(msgInfo);
+      messageWrapper.appendChild(messageBox);
+      messagesDiv.appendChild(messageWrapper);
+
+      // Auto scroll to bottom
+      messagesDiv.scrollTop = messagesDiv.scrollHeight;
+    };
+
+    chatSocket.onclose = function (e) {
+      console.error("Chat socket closed unexpectedly");
+    };
+
+    form.addEventListener("submit", function (event) {
+      event.preventDefault();
+      const message = input.value.trim();
+      if (message === "") return;
+
+      const messageData = {
+        message: message,
+        username: username,
+        room_id: roomId,
+      };
+      chatSocket.send(JSON.stringify(messageData));
+      input.value = "";
+    });
+
+    // Initial scroll to bottom on page load
+    messagesDiv.scrollTop = messagesDiv.scrollHeight;
+  });
+</script>
+{% endblock %}

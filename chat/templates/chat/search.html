@@ -1,0 +1,116 @@
+<!-- prettier-ignore -->
+
+{% extends 'chat/base.html' %}
+{% block title %}
+Search Users
+{% endblock %}
+{% block content %}
+<div class="container mt-5" style="max-width: 700px">
+  <h2 class="mb-4 text-center" style="color: #cc9900">Search Users</h2>
+
+  <form
+    method="get"
+    class="input-group mb-4 shadow-sm rounded"
+    role="search"
+    style="background: #fff9e6; padding: 10px"
+  >
+    <input
+      type="text"
+      name="q"
+      class="form-control border-0"
+      placeholder="Search by username, name, or email..."
+      value="{{ query }}"
+      aria-label="Search users"
+      style="background: transparent; font-size: 1rem"
+      autofocus
+      required
+    />
+    <button
+      class="btn btn-yellow fw-semibold"
+      type="submit"
+      style="min-width: 100px"
+    >
+      Search
+    </button>
+  </form>
+
+  {% if query %}
+  <h5 class="mb-3" style="color: #cc9900">Results for "{{ query }}":</h5>
+  {% if users %}
+  <ul class="list-group shadow-sm rounded">
+    {% for user in users %}
+    <a
+      href="{% url 'create_chat_room' user.id %}"
+      class="list-group-item list-group-item-action d-flex align-items-center"
+      style="
+        font-weight: 500;
+        color: #444;
+        text-decoration: none;
+        background: #fff;
+      "
+    >
+      {% if user.userinfo.image %}
+      <img
+        src="{{ user.userinfo.image.url }}"
+        alt="{{ user.userinfo.name }}"
+        style="
+          width: 40px;
+          height: 40px;
+          border-radius: 50%;
+          object-fit: cover;
+          margin-right: 15px;
+        "
+      />
+      {% else %}
+      <div
+        style="
+          width: 40px;
+          height: 40px;
+          border-radius: 50%;
+          background-color: #ffcc00;
+          margin-right: 15px;
+          display: flex;
+          justify-content: center;
+          align-items: center;
+          font-weight: bold;
+          color: white;
+          font-size: 1.2rem;
+        "
+      >
+        {{ user.username|slice:":1"|upper }}
+      </div>
+      {% endif %}
+      <div>
+        <div>{{ user.userinfo.name }}</div>
+        <small class="text-muted"
+          >{{ user.username }} &bull; {{ user.email }}</small
+        >
+      </div>
+    </a>
+    {% endfor %}
+  </ul>
+  {% else %}
+  <p class="text-muted fst-italic">No users found.</p>
+  {% endif %} {% endif %}
+</div>
+
+<style>
+  .btn-yellow {
+    background-color: #ffcc00;
+    color: white;
+    transition: background-color 0.3s ease;
+  }
+  .btn-yellow:hover {
+    background-color: #e6b800;
+  }
+  input:focus {
+    outline: none;
+    box-shadow: none;
+  }
+  /* On hover, slightly darker background for user items */
+  .list-group-item-action:hover {
+    background-color: #fff4cc !important;
+    color: #cc9900 !important;
+  }
+</style>
+{% endblock %}

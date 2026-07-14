@@ -1,0 +1,64 @@
+<!-- ignore prettier -->
+
+{% extends 'chat/base.html' %} {% load static %} {% block title %} Chat Rooms
+{%endblock %} {% block content %}
+<div class="container mt-5" style="max-width: 700px">
+  <h2 class="mb-4 text-center" style="color: #cc9900">Your Chat Rooms</h2>
+
+  <!-- 🔍 Search Form with Button -->
+  <form method="GET" action="{% url 'search_users' %}" class="mb-4 d-flex">
+    <input
+      type="text"
+      name="q"
+      class="form-control me-2 border-warning"
+      placeholder="Search chat rooms by name or username..."
+      value="{{ request.GET.q }}"
+    />
+    <button type="submit" class="btn btn-warning text-white">Search</button>
+  </form>
+
+  {% if chatrooms %}
+  <ul class="list-group shadow-sm rounded">
+    {% for room in chatrooms %}
+    <a
+      href="{% url 'chatroom' room.id %}"
+      class="list-group-item list-group-item-action d-flex align-items-center"
+      style="background: #fff9e6"
+    >
+      {% if room.other_user.userinfo.image %}
+      <img
+        src="{{ room.other_user.userinfo.image.url }}"
+        alt="{{ room.other_user.username }}"
+        class="rounded-circle me-3"
+        width="50"
+        height="50"
+      />
+      {% else %}
+      <img
+        src="{% static 'default-profile.png' %}"
+        class="rounded-circle me-3"
+        width="50"
+        height="50"
+      />
+      {% endif %}
+      <div>
+        <div style="color: #cc9900; font-weight: 600">
+          {{ room.other_user.userinfo.name }}
+        </div>
+        <small class="text-muted">@{{ room.other_user.username }}</small>
+      </div>
+    </a>
+    {% endfor %}
+  </ul>
+  {% else %}
+  <p class="text-muted fst-italic">No active chat rooms.</p>
+  {% endif %}
+</div>
+
+<style>
+  a.list-group-item:hover {
+    background-color: #ffe680;
+    transition: background-color 0.2s ease;
+  }
+</style>
+{% endblock %}
