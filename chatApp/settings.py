@@ -82,10 +82,21 @@ ASGI_APPLICATION = 'chatApp.asgi.application'
 # Database
 # https://docs.djangoproject.com/en/6.0/ref/settings/#databases
 
+# DATABASES = {
+#     'default': {
+#         'ENGINE': 'django.db.backends.sqlite3',
+#         'NAME': BASE_DIR / 'db.sqlite3',
+#     }
+# }
+
 DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
+    "default": {
+        "ENGINE": "django.db.backends.mysql",
+        "NAME": "chatapp",
+        "USER": "admin",
+        "PASSWORD": "122004Aj",
+        "HOST": "database-2.c76eg8ocy37z.ap-southeast-2.rds.amazonaws.com",
+        "PORT": "3306",
     }
 }
 
