@@ -91,7 +91,7 @@ ASGI_APPLICATION = 'chatApp.asgi.application'
 
 DATABASES = {
     "default": {
-        "ENGINE": "django.db.backends.mysql",
+        "ENGINE": "django.db.backends.sqlite3",
         "NAME": "chatapp",
         "USER": "admin",
         "PASSWORD": "122004Aj",
