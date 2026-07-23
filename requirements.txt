@@ -1,0 +1,7 @@
+Django>=4.2
+channels>=4.0
+uvicorn[standard]>=0.22
+pillow>=10.0
+psycopg2-binary
+dj_database_url
+whitenoise
